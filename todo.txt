@@ -1,0 +1,15 @@
+apenas estilos e traduções corretas:
+[X] - pagina login
+[] - pagina signup
+[] - pagina dashboard com dados mockados
+[] - footer de copyright com meu linkedin + github
+
+fazer funcionar mesmo consumindo o backend:
+[] - pagina login
+[] - pagina signup
+[] - dashboard
+
+depois de acabar quase tudo
+[] - adicionar melhor as tecnologias no readme depois de finalizar projeto
+[] - deploy netlify
+[] - testar logicas automatizado

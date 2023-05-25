@@ -1,0 +1,23 @@
+@import "./../../../styles/utilities";
+@import "./../../../styles/settings/settings.variables";
+
+.footer {
+  width: 100%;
+  padding: 1.5rem 3rem;
+  background: map-get($colors, "secondary");
+
+  @extend .flex-align-center;
+  justify-content: space-between;
+
+  &__alert {
+    color: black;
+    font-weight: 500;
+  }
+
+  &__social ul {
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 1rem;
+  }
+}

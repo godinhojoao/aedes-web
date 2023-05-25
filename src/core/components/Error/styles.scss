@@ -1,0 +1,17 @@
+@import './../../../styles/utilities';
+@import './../../../styles/settings/settings.variables';
+
+.error {
+  @extend .flex-align-center;
+  justify-content: center;
+  width: 100%;
+  height: 70vh;
+  font-size: 2.5rem;
+  color: map-get($colors, 'secondary');
+
+  img {
+    height: 5rem;
+    width: 5rem;
+    margin-left: 1rem;
+  }
+}

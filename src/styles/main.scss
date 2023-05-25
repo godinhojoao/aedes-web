@@ -1,0 +1,30 @@
+@import "./settings/settings.normalize";
+@import "./settings/settings.variables";
+@import "./utilities";
+
+html,
+body,
+#root {
+  background-color: map-get($colors, "primary-background");
+  font-family: map-get($fonts, "primary");
+  font-size: 16px;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+#root {
+  @extend .flex-both-end;
+  align-items: end;
+  flex-direction: column;
+  color: map-get($colors, "primary-font");
+}
+
+.main {
+  height: 100%;
+  width: 80%;
+  padding-right: 3.5rem;
+
+  &__content {
+    margin: 2rem 0;
+  }
+}

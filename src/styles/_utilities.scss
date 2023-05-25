@@ -1,0 +1,46 @@
+// classes to reuse extending
+.main-title {
+  font-size: 4.2rem;
+  font-weight: 700;
+}
+
+.paragraph {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.subtitle {
+  font-size: 1.6rem;
+  font-weight: 700;
+
+  &--active {
+    filter: invert(1) !important;
+  }
+}
+
+.flex-align-center {
+  display: flex;
+  align-items: center;
+}
+
+.flex-align-end {
+  display: flex;
+  align-items: end;
+}
+
+.flex-both-end {
+  display: flex;
+  justify-content: end;
+  align-items: end;
+}
+
+.clickable-icon {
+  cursor: pointer;
+  transition: background-color 250ms ease-out;
+  border-radius: 50%;
+  padding: 0.4rem 0.8rem;
+
+  &:hover {
+    background-color: rgba(204, 204, 204, 0.14);
+  }
+}
