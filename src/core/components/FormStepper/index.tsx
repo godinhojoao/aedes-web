@@ -63,7 +63,7 @@ export function FormStepper(props: FormStepperProps): JSX.Element {
               Loading...
             </LoadingButton>
           ) : (
-            <Button onClick={handleNext}>
+            <Button disabled={true} onClick={handleNext}>
               {activeStep === lastElementIndex ? "Finish" : "Next"}
             </Button>
           )}

@@ -15,7 +15,11 @@
 - [TypeScript](https://www.typescriptlang.org)
 - [ApolloClient](https://www.apollographql.com/docs/react/)
 - [Sass](https://sass-lang.com/)
+- [React-hook-form](https://react-hook-form.com)
+- [Material UI](https://mui.com/material-ui/getting-started/overview/)
+- [Yup](https://www.npmjs.com/package/yup)
 - [Jest](https://jestjs.io/docs/getting-started)
+- [Vite](https://vitejs.dev/)
 - [Eslint](https://eslint.org)
 - [Husky](https://github.com/typicode/husky) -->
 
@@ -26,7 +30,7 @@
 - First you need to create an .env with the content: `VITE_AEDES_API_URL=localhost url where aedes-api is running`
 
 ```bash
-nvm install 16
+nvm install 18.15
 nvm use
 npm run dev
 ```
