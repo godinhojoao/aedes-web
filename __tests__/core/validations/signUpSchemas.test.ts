@@ -1,77 +1,72 @@
-import { ValidationError } from 'yup';
-import { personalSchema, credentialsSchema } from './../../../src/core/validations/signUpSchemas';
+import { ValidationError } from "yup";
+import { signupSchema } from "./../../../src/core/validations/signUpSchema";
 
-
-describe('SignUp validation schemas', () => {
-  describe('personalSchema', () => {
-    it('Given valid payload should return data object', async () => {
+describe("SignUp validation schemas", () => {
+  describe("signupSchema", () => {
+    it("Given valid payload should return data object", async () => {
       const personalData = {
-        name: 'John Doe',
-        cpf: '406.936.640-70',
+        name: "John Doe",
+        cpf: "40693664070",
+        email: "john@example.com",
+        password: "password123",
+        confirmPassword: "password123",
       };
 
-      await expect(personalSchema.validate(personalData)).resolves.toBe(
+      await expect(signupSchema.validate(personalData)).resolves.toBe(
         personalData
       );
     });
 
-    it('Given invalid cpf should return error', async () => {
+    it("Given invalid cpf should return error", async () => {
       const personalData = {
-        name: 'John Doe',
-        cpf: '406.936.640-87',
+        name: "John Doe",
+        cpf: "40693664072",
+        email: "john@example.com",
+        password: "password123",
+        confirmPassword: "password123",
       };
-
-      const noValidCall = (): any => personalSchema.validateSync(personalData);
+      const noValidCall = (): any => signupSchema.validateSync(personalData);
       expect(noValidCall).toThrow(ValidationError);
-      expect(noValidCall).toThrow('CPF inválido');
+      expect(noValidCall).toThrow("CPF inválido");
     });
 
-    it('Given invalid payload should return error', async () => {
+    it("Given invalid name should return error", async () => {
       const personalData = {
-        name: 'John DoeasdkodaskodkasokodsakoadskoadskosdDoeasdkodaskodkasokodsakoadskoadskosdDoeasdkodaskodkasokodsakoadskoadskosdDoeasdkodaskodkasokodsakoadskoadskosdDoeasdkodaskodkasokodsakoadskoadskosdDoeasdkodaskodkasokodsakoadskoadskosdDoeasdkodaskodkasokodsakoadskoadskosd',
-        cpf: '406.936.640-70',
+        name: "John DoeasdkodaskodkasokodsakoadskoadskosdDoeasdkodaskodkasokodsakoadskoadskosdDoeasdkodaskodkasokodsakoadskoadskosdDoeasdkodaskodkasokodsakoadskoadskosdDoeasdkodaskodkasokodsakoadskoadskosdDoeasdkodaskodkasokodsakoadskoadskosdDoeasdkodaskodkasokodsakoadskoadskosd",
+        cpf: "40693664070",
+        email: "john@example.com",
+        password: "password123",
+        confirmPassword: "password123",
       };
-
-      const noValidCall = (): any => personalSchema.validateSync(personalData);
+      const noValidCall = (): any => signupSchema.validateSync(personalData);
       expect(noValidCall).toThrow(ValidationError);
-      expect(noValidCall).toThrow('Nome deve conter no máximo 255 caracteres');
-    });
-  });
-
-  describe('credentialsSchema', () => {
-    it('Given valid credentials should return data object', async () => {
-      const credentials = {
-        email: 'john@example.com',
-        password: 'password123',
-        confirmPassword: 'password123',
-      };
-      await expect(credentialsSchema.validate(credentials)).resolves.toBe(
-        credentials
-      );
+      expect(noValidCall).toThrow("Nome deve conter no máximo 255 caracteres");
     });
 
-    it('Given invalid confirmPassword should return error', async () => {
-      const credentials = {
-        email: 'john@example.com',
-        password: 'password123',
-        confirmPassword: 'password456',
+    it("Given invalid confirmPassword should return error", async () => {
+      const personalData = {
+        name: "John",
+        cpf: "40693664070",
+        email: "john@example.com",
+        password: "password123",
+        confirmPassword: "password1",
       };
-
-      const noValidCall = (): any => credentialsSchema.validateSync(credentials);
+      const noValidCall = (): any => signupSchema.validateSync(personalData);
       expect(noValidCall).toThrow(ValidationError);
-      expect(noValidCall).toThrow('Senhas não coincidem');
+      expect(noValidCall).toThrow("Senhas não coincidem");
     });
 
-    it('Given invalid email should return error', async () => {
-      const credentials = {
-        email: 'johnadsa',
-        password: 'password123',
-        confirmPassword: 'password123',
+    it("Given invalid email should return error", async () => {
+      const personalData = {
+        name: "John",
+        cpf: "40693664070",
+        email: "johnasdsa",
+        password: "password123",
+        confirmPassword: "password123",
       };
-
-      const noValidCall = (): any => credentialsSchema.validateSync(credentials);
+      const noValidCall = (): any => signupSchema.validateSync(personalData);
       expect(noValidCall).toThrow(ValidationError);
-      expect(noValidCall).toThrow('E-mail inválido');
+      expect(noValidCall).toThrow("E-mail inválido");
     });
   });
 });

@@ -1,6 +1,4 @@
 apenas estilos e traduções corretas:
-[X] - pagina login
-[] - pagina signup
 [] - pagina dashboard com dados mockados
 [] - footer de copyright com meu linkedin + github
 
