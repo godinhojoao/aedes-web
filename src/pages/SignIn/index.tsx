@@ -99,6 +99,7 @@ export function SignInPage(): JSX.Element {
                 type="submit"
                 fullWidth
                 variant="contained"
+                color="secondary"
                 sx={{ mt: 3, mb: 2 }}
               >
                 Entrar
@@ -110,7 +111,7 @@ export function SignInPage(): JSX.Element {
                   </Link>
                 </Grid> */}
                 <Grid item>
-                  <Link href="/#/cadastro" variant="body2">
+                  <Link href="/#/cadastro" variant="body2" color="secondary">
                     {"Não tem uma conta? Criar nova conta"}
                   </Link>
                 </Grid>

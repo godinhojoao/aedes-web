@@ -152,7 +152,7 @@ export function SignUpPage(): JSX.Element {
             </Grid>
             <Grid container justifyContent="flex-end">
               <Grid item mt={2} mb={2}>
-                <Link href="/" variant="body2">
+                <Link href="/" variant="body2" color="secondary">
                   Já possui uma conta? Entrar
                 </Link>
               </Grid>
