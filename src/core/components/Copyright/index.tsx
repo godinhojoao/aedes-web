@@ -7,13 +7,13 @@ export function Copyright(): JSX.Element {
       variant="body2"
       color="text.secondary"
       align="center"
-      sx={{ mt: 5 }}
+      sx={{ mt: 0, mb: 5 }}
     >
       {"Copyright © "}
 
       <Link
         color="inherit"
-        href="https://www.linkedin.com/in/jo%C3%A3o-godinho/"
+        href="https://www.linkedin.com/in/joaogodinhoo/"
         rel="noreferrer"
         target="_blank"
         mr={.5}

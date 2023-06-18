@@ -1,13 +1,14 @@
-apenas estilos e traduções corretas:
-[] - pagina dashboard com dados mockados
-[] - footer de copyright com meu linkedin + github
-
 fazer funcionar mesmo consumindo o backend:
 [] - pagina login
 [] - pagina signup
-[] - dashboard
+[] - tabela de denuncias
+  [] - buscar
+  [] - editar
+[] - mapa da dengue
 
-depois de acabar quase tudo
+
+[ ] - se der tempo mudar o mapa da dengue pra um heatmap
+
+depois de acabar tudo
 [] - adicionar melhor as tecnologias no readme depois de finalizar projeto
 [] - deploy netlify
-[] - testar logicas automatizado
