@@ -1,9 +1,7 @@
-import * as React from "react";
+/* eslint-disable no-console */
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-// import FormControlLabel from "@mui/material/FormControlLabel";
-// import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
@@ -11,16 +9,57 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { Copyright } from "../../core/components/Copyright";
-
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { signInSchema } from "../../core/validations/signInSchema";
+import { PasswordInput } from "../../core/components/PasswordInput";
+import { useState } from "react";
+import { CustomModal } from "../../core/components/Modal";
+import { useMutation } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
+import { GraphqlError } from "../../core/interfaces/graphql/GraphqlError";
+import {
+  SignInInput,
+  SignInResponse,
+} from "../../core/interfaces/graphql/SignInMutation";
+import { SIGN_IN } from "../../core/mutations";
+import { LocalStorageManager } from "../../core/shared/LocalStorageManager";
 
 export function SignInPage(): JSX.Element {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+  const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [currentErrors, setCurrentErrors] = useState<string[]>([]);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitted },
+    trigger,
+  } = useForm({
+    resolver: yupResolver(signInSchema),
+  });
+  const [signIn] = useMutation<SignInResponse, SignInInput>(SIGN_IN, {
+    onError: () => setOpenModal(true),
+    onCompleted: (data: SignInResponse) => {
+      const account = data.signIn.account;
+      const token = data.signIn.token;
+      LocalStorageManager.setItem("aedes-account", account);
+      LocalStorageManager.setItem("aedes-token", token);
+      navigate("/denuncias");
+    },
+  });
+
+  const onSubmit = async (input: any): Promise<void> => {
+    trigger().then(async () => {
+      console.log("input", input);
+      const result = await signIn({ variables: { input: input } });
+      // @ts-ignore
+      if (result && result.errors && result.errors.graphQLErrors) {
+        // @ts-ignore
+        const errorMessages = result.errors.graphQLErrors.map(
+          (error: GraphqlError) => error.detailedMessage
+        );
+        setCurrentErrors(errorMessages);
+      }
     });
   };
 
@@ -61,29 +100,25 @@ export function SignInPage(): JSX.Element {
           <Box
             component="form"
             noValidate
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             sx={{ mt: 1 }}
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="E-mail"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Senha"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                margin="normal"
+                id="email"
+                {...register("email")}
+                error={!!errors.email}
+                helperText={errors.email?.message as any}
+                label="E-mail"
+                autoComplete="off"
+              />
+
+              <PasswordInput errors={errors} register={register} />
+            </Grid>
+
             {/* <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Lembrar senha"
@@ -94,6 +129,8 @@ export function SignInPage(): JSX.Element {
               variant="contained"
               color="secondary"
               sx={{ mt: 3, mb: 2 }}
+              disabled={!isValid && isSubmitted}
+              onClick={handleSubmit(onSubmit)}
             >
               Entrar
             </Button>
@@ -110,6 +147,12 @@ export function SignInPage(): JSX.Element {
               </Grid>
             </Grid>
             <Copyright />
+
+            <CustomModal
+              open={openModal}
+              currentErrors={currentErrors}
+              onClose={(): void => setOpenModal(false)}
+            />
           </Box>
         </Box>
       </Grid>

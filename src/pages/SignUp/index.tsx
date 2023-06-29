@@ -1,4 +1,5 @@
-/* eslint-disable no-console */
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import TextField from "@mui/material/TextField";
@@ -15,8 +16,20 @@ import { signupSchema } from "../../core/validations/signUpSchema";
 import { Controller } from "react-hook-form";
 import { OnChangeEvent } from "../../core/interfaces/declarations/OnChangeEvent";
 import { formatCPF } from "../../core/shared/formatCPF";
+import {
+  CreateAccountInput,
+  CreatedAccountResponse,
+} from "../../core/interfaces/graphql/CreateAccountMutation";
+import { useMutation } from "@apollo/client";
+import { CREATE_ACCOUNT } from "../../core/mutations";
+import { CustomModal } from "../../core/components/Modal";
+import { GraphqlError } from "../../core/interfaces/graphql/GraphqlError";
+import { PasswordInput } from "../../core/components/PasswordInput";
 
 export function SignUpPage(): JSX.Element {
+  const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [currentErrors, setCurrentErrors] = useState<string[]>([]);
   const {
     register,
     handleSubmit,
@@ -26,10 +39,25 @@ export function SignUpPage(): JSX.Element {
   } = useForm({
     resolver: yupResolver(signupSchema),
   });
-  const onSubmit = (data: any): void => {
-    console.log("data", data);
-    trigger().then(() => {
-      console.log("ta valido");
+  const [createAccount] = useMutation<CreatedAccountResponse, CreateAccountInput>(
+    CREATE_ACCOUNT,
+    {
+      onError: () => setOpenModal(true),
+      onCompleted: () => navigate("/entrar"),
+    }
+  );
+
+  const onSubmit = async (input: any): Promise<void> => {
+    trigger().then(async () => {
+      const result = await createAccount({ variables: { input: input } });
+      // @ts-ignore
+      if (result && result.errors && result.errors.graphQLErrors) {
+        // @ts-ignore
+        const errorMessages = result.errors.graphQLErrors.map(
+          (error: GraphqlError) => error.detailedMessage
+        );
+        setCurrentErrors(errorMessages);
+      }
     });
   };
 
@@ -75,6 +103,7 @@ export function SignUpPage(): JSX.Element {
                 autoFocus
               />
             </Grid>
+
             <Grid item xs={12}>
               <Controller
                 control={control}
@@ -117,20 +146,11 @@ export function SignUpPage(): JSX.Element {
                 autoComplete="off"
               />
             </Grid>
+
             <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                label="Senha"
-                type="password"
-                id="password"
-                {...register("password")}
-                error={!!errors.password}
-                helperText={errors.password?.message as any}
-                autoComplete="off"
-              />
+              <PasswordInput errors={errors} register={register} />
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <TextField
                 required
                 fullWidth
@@ -142,7 +162,7 @@ export function SignUpPage(): JSX.Element {
                 helperText={errors.confirmPassword?.message as any}
                 autoComplete="off"
               />
-            </Grid>
+            </Grid> */}
           </Grid>
           <Grid container justifyContent="flex-end">
             <Grid item mt={2} mb={2}>
@@ -167,6 +187,12 @@ export function SignUpPage(): JSX.Element {
       </Box>
 
       <Copyright />
+
+      <CustomModal
+        open={openModal}
+        currentErrors={currentErrors}
+        onClose={(): void => setOpenModal(false)}
+      />
     </Container>
   );
 }
