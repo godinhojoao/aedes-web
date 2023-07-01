@@ -21,7 +21,7 @@ import {
   CreatedAccountResponse,
 } from "../../core/interfaces/graphql/CreateAccountMutation";
 import { useMutation } from "@apollo/client";
-import { CREATE_ACCOUNT } from "../../core/mutations";
+import { CREATE_ACCOUNT } from "../../core/graphql/mutations";
 import { CustomModal } from "../../core/components/Modal";
 import { GraphqlError } from "../../core/interfaces/graphql/GraphqlError";
 import { PasswordInput } from "../../core/components/PasswordInput";

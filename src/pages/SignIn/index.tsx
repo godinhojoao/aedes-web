@@ -22,7 +22,7 @@ import {
   SignInInput,
   SignInResponse,
 } from "../../core/interfaces/graphql/SignInMutation";
-import { SIGN_IN } from "../../core/mutations";
+import { SIGN_IN } from "../../core/graphql/mutations";
 import { LocalStorageManager } from "../../core/shared/LocalStorageManager";
 
 export function SignInPage(): JSX.Element {
@@ -50,7 +50,6 @@ export function SignInPage(): JSX.Element {
 
   const onSubmit = async (input: any): Promise<void> => {
     trigger().then(async () => {
-      console.log("input", input);
       const result = await signIn({ variables: { input: input } });
       // @ts-ignore
       if (result && result.errors && result.errors.graphQLErrors) {

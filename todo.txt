@@ -10,3 +10,4 @@ depois de acabar tudo
 [] - adicionar melhor as tecnologias no readme depois de finalizar projeto
 [] - deploy netlify
 [] - separar types e interfaces
+[] - mudar modal de erro pra context e tirar de todos lugares, manter só no APP
