@@ -9,10 +9,11 @@ import { SignInPage } from "./pages/SignIn";
 import { SignUpPage } from "./pages/SignUp";
 import { DenguePage } from "./pages/Dengue";
 import { InfoPage } from "./pages/Info";
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { ComplaintPage } from "./pages/Complaint";
 import { LocalStorageManager } from "./core/shared/LocalStorageManager";
 import { isAuthenticatedRoute } from "./core/shared/isAuthenticatedRoute";
+import { AuthContext, AuthContextValue } from "./core/context/AuthContext";
 
 interface RoutesProps {
   setPathname: React.Dispatch<React.SetStateAction<string>>;
@@ -21,21 +22,24 @@ interface RoutesProps {
 export function AppRoutes({ setPathname }: RoutesProps): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const { isAuthenticated, setIsAuthenticated } =
+    useContext(AuthContext) || ({} as AuthContextValue);
+  const token = LocalStorageManager.getItem("aedes-token");
+  const account = LocalStorageManager.getItem("aedes-account", true);
+  const hasAuthCredentials = !!token && !!account;
 
   useEffect(() => {
     const onAuthenticatedRoute = isAuthenticatedRoute(location.pathname);
     setPathname(location.pathname);
+    setIsAuthenticated(hasAuthCredentials);
 
-    if (!onAuthenticatedRoute) {
-      const token = LocalStorageManager.getItem("aedes-token");
-      const account = LocalStorageManager.getItem("aedes-account", true);
-      const hasAuthCredentials = !!token && !!account;
-      setIsAuthenticated(hasAuthCredentials);
+    if (!onAuthenticatedRoute && hasAuthCredentials) {
+      return navigate("/denuncias");
+    }
 
-      if (hasAuthCredentials && !onAuthenticatedRoute) {
-        navigate('/denuncias');
-      }
+    if (onAuthenticatedRoute && !hasAuthCredentials) {
+      LocalStorageManager.removeItem(!token ? "aedes-account" : "aedes-token");
+      return navigate("/entrar");
     }
   }, [location.pathname]);
 

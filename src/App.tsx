@@ -15,6 +15,7 @@ import { ContentBox } from "./core/components/ContentBox";
 import { AppRoutes } from "./routes";
 import { isAuthenticatedRoute } from "./core/shared/isAuthenticatedRoute";
 import "./styles/main.scss";
+import { AuthProvider } from "./core/context/AuthContext";
 
 const client = new ApolloClient({
   link: new HttpLink({
@@ -38,20 +39,22 @@ function App(): JSX.Element {
     : { width: "100%" };
 
   return (
-    <ApolloProvider client={client}>
-      <HashRouter>
-        {isLoading && <LinearProgress />}
-        {isDashboardPage && <Header open={open} setOpen={setOpen} />}
-        <Box sx={mainBoxStyles}>
-          {isDashboardPage && <SideBarMenu open={open} setOpen={setOpen} />}
-          {(isDashboardPage && (
-            <ContentBox>
-              <AppRoutes setPathname={setPathname} />
-            </ContentBox>
-          )) || <AppRoutes setPathname={setPathname} />}
-        </Box>
-      </HashRouter>
-    </ApolloProvider>
+    <AuthProvider>
+      <ApolloProvider client={client}>
+        <HashRouter>
+          {isLoading && <LinearProgress />}
+          {isDashboardPage && <Header open={open} setOpen={setOpen} />}
+          <Box sx={mainBoxStyles}>
+            {isDashboardPage && <SideBarMenu open={open} setOpen={setOpen} />}
+            {(isDashboardPage && (
+              <ContentBox>
+                <AppRoutes setPathname={setPathname} />
+              </ContentBox>
+            )) || <AppRoutes setPathname={setPathname} />}
+          </Box>
+        </HashRouter>
+      </ApolloProvider>
+    </AuthProvider>
   );
 }
 

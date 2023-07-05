@@ -69,4 +69,8 @@ describe("SignUp validation schemas", () => {
       expect(noValidCall).toThrow("E-mail inválido");
     });
   });
+
+  it.only('dale', () => {
+    expect(2).toBe(2);
+  });
 });

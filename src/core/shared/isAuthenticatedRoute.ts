@@ -1,7 +1,8 @@
 export function isAuthenticatedRoute(routeName: string): boolean {
-  const nonAuthenticatedRoutes = [
-    '/entrar',
-    '/cadastro',
+  const authenticatedRoutes = [
+    '/denuncias',
+    '/mapa-dengue',
+    '/informacoes',
   ];
-  return !nonAuthenticatedRoutes.includes(routeName);
+  return authenticatedRoutes.includes(routeName);
 }

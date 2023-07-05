@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -20,8 +20,12 @@ import {
   ComplaintTableRow,
 } from "../../interfaces/graphql/FindAllComplaintsQuery";
 import { formatDateTime } from "../../shared/formatDate";
+import { AuthContext, AuthContextValue } from "../../context/AuthContext";
+import { getComplaintStatusTranslation } from "../../shared/getComplaintStatusTranslation";
 
 export function ComplaintTable(): JSX.Element {
+  const { setIsAuthenticated } =
+    useContext(AuthContext) || ({} as AuthContextValue);
   const [currentComplaint, setCurrentComplaint] =
     useState<ComplaintTableRow | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -47,6 +51,11 @@ export function ComplaintTable(): JSX.Element {
       },
       onCompleted: (data: FindAllComplaintsResponse) => {
         setRows(data.findAllComplaints.items);
+      },
+      onError: (error: any) => {
+        if (error.message === "Invalid token") {
+          setIsAuthenticated(false);
+        }
       },
     }
   );
@@ -81,7 +90,7 @@ export function ComplaintTable(): JSX.Element {
                 </TableCell>
                 <TableCell align="right">{row.formattedAddress}</TableCell>
                 <TableCell style={{ width: 160 }} align="right">
-                  {row.status}
+                  {getComplaintStatusTranslation(row.status)}
                 </TableCell>
                 <TableCell align="right">
                   <Button
