@@ -1,11 +1,6 @@
 import { Location } from "./Location";
 
-export enum StatusesEnum {
-  WAITING = 0,
-  DOING = 1,
-  SOLVED = 2,
-  REJECTED = 3,
-}
+export type StatusesEnum = 'WAITING' | 'REJECTED' | 'SOLVED' | 'DOING'
 
 export interface Complaint {
   id: string;

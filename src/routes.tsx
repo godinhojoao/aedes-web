@@ -14,6 +14,7 @@ import { ComplaintPage } from "./pages/Complaint";
 import { LocalStorageManager } from "./core/shared/LocalStorageManager";
 import { isAuthenticatedRoute } from "./core/shared/isAuthenticatedRoute";
 import { AuthContext, AuthContextValue } from "./core/context/AuthContext";
+import { Account } from "./core/interfaces/types/Account";
 
 interface RoutesProps {
   setPathname: React.Dispatch<React.SetStateAction<string>>;
@@ -22,16 +23,17 @@ interface RoutesProps {
 export function AppRoutes({ setPathname }: RoutesProps): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, setIsAuthenticated } =
+  const { isAuthenticated, setIsAuthenticated, setAccount } =
     useContext(AuthContext) || ({} as AuthContextValue);
-  const token = LocalStorageManager.getItem("aedes-token");
-  const account = LocalStorageManager.getItem("aedes-account", true);
+  const token = LocalStorageManager.getItem<string>("aedes-token");
+  const account = LocalStorageManager.getItem<Account>("aedes-account", true);
   const hasAuthCredentials = !!token && !!account;
 
   useEffect(() => {
     const onAuthenticatedRoute = isAuthenticatedRoute(location.pathname);
     setPathname(location.pathname);
     setIsAuthenticated(hasAuthCredentials);
+    setAccount(account);
 
     if (!onAuthenticatedRoute && hasAuthCredentials) {
       return navigate("/denuncias");

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useContext, forwardRef } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import AppBar from "@mui/material/AppBar";
@@ -13,8 +13,18 @@ import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
 import { ComplaintDialogProps } from "../../interfaces/props/ComplaintDialogProps";
+import { complaintStatusesManager } from "../../shared/complaintStatusesManager";
+import { formatDateTime } from "../../shared/formatDate";
+import { AuthContext, AuthContextValue } from "../../context/AuthContext";
+import { UPDATE_COMPLAINT } from "../../graphql/mutations";
+import {
+  UpdateComplaintInput,
+  UpdateComplaintResponse,
+} from "../../interfaces/graphql/UpdateComplaintMutation";
+import { useMutation } from "@apollo/client";
+import { LocalStorageManager } from "../../shared/LocalStorageManager";
 
-const Transition = React.forwardRef(function Transition(
+const Transition = forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;
   },
@@ -23,51 +33,44 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="right" ref={ref} {...props} />;
 });
 
-const statusOptions = [
-  { label: "Pendente", value: "pending", color: "blue" },
-  { label: "Cancelada", value: "canceled", color: "purple" },
-  { label: "Resolvida", value: "solved", color: "green" },
-
-  // on backend:
-  // WAITING
-  // DOING
-  // SOLVED
-  // REJECTED
-];
-
 export function ComplaintDialog({
   open,
   setOpen,
-  currentComplaint
+  currentComplaint,
+  setCurrentComplaint,
+  afterSave,
 }: ComplaintDialogProps): JSX.Element {
-  // eslint-disable-next-line no-console
-  console.log('currentComplaint', currentComplaint);
-  const [formData, setFormData] = React.useState({
-    id: "884e7d19-7b16-4447-89d9-d8b1917148c2",
-    status: "pending",
-    city: "Bagé",
-    state: "RS",
-    street: "Rua Otávio Hipólito",
-    neighborhood: "Getúlio Vargas",
-    cep: "96400-090",
-    number: "1940",
-    createdAt: "09/06/2023 19:00",
-    updatedAt: "10/06/2023 21:00",
-    description:
-      "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum",
+  const token = LocalStorageManager.getItem("aedes-token");
+  const { account } = useContext(AuthContext) || ({} as AuthContextValue);
+  const [updateComplaint] = useMutation<
+    UpdateComplaintResponse,
+    UpdateComplaintInput
+  >(UPDATE_COMPLAINT, {
+    context: {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    },
+    onCompleted: async () => {
+      await afterSave();
+      setOpen(false);
+    },
   });
 
-  const handleClose = (): void => {
-    setOpen(false);
-  };
-
-  const handleSave = (): void => {
-    handleClose();
+  const handleSave = async (): Promise<void> => {
+    const complaintToUpdate = {
+      id: currentComplaint.id,
+      solverId: account?.id,
+      solverDescription: currentComplaint.solverDescription || "",
+      status: currentComplaint.status,
+      updatedAt: new Date(),
+    };
+    updateComplaint({ variables: { input: complaintToUpdate } });
   };
 
   const handleChange = (e: { target: { name: any; value: any } }): void => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
+    setCurrentComplaint((prevData: any) => ({
       ...prevData,
       [name]: value,
     }));
@@ -78,7 +81,7 @@ export function ComplaintDialog({
       <Dialog
         fullScreen
         open={open}
-        onClose={handleClose}
+        onClose={(): void => setOpen(false)}
         TransitionComponent={Transition}
         sx={{
           width: "60%",
@@ -90,7 +93,7 @@ export function ComplaintDialog({
             <IconButton
               edge="start"
               color="inherit"
-              onClick={handleClose}
+              onClick={(): void => setOpen(false)}
               aria-label="close"
             >
               <CloseIcon />
@@ -108,7 +111,7 @@ export function ComplaintDialog({
                   ml: 1,
                 }}
               >
-                #{formData.id}
+                #{currentComplaint.id}
               </Box>
             </Typography>
 
@@ -133,15 +136,15 @@ export function ComplaintDialog({
               select
               label="Status"
               name="status"
-              value={formData.status}
+              value={currentComplaint.status || ""}
               onChange={handleChange}
               fullWidth
               sx={{ marginBottom: "15px" }}
             >
-              {statusOptions.map((option) => (
+              {complaintStatusesManager.complaintStatuses.map((option) => (
                 <MenuItem
                   key={option.value}
-                  value={option.value}
+                  value={option.value || ""}
                   style={{ color: option.color }}
                 >
                   {option.label}
@@ -154,34 +157,53 @@ export function ComplaintDialog({
             <TextField
               label="Data de criação"
               name="createdAt"
-              value={formData.createdAt}
+              value={
+                currentComplaint.createdAt
+                  ? formatDateTime(new Date(currentComplaint.createdAt))
+                  : ""
+              }
               fullWidth
               sx={{ marginBottom: "15px" }}
               disabled
             />
           </Grid>
 
-          <Grid item xs={6}>
-            <TextField
-              label="Data de atualização"
-              name="updatedAt"
-              value={formData.updatedAt}
-              fullWidth
-              sx={{ marginBottom: "15px" }}
-              disabled
-            />
-          </Grid>
+          {currentComplaint.updatedAt && (
+            <Grid item xs={6}>
+              <TextField
+                label="Data de atualização"
+                name="updatedAt"
+                value={formatDateTime(new Date(currentComplaint.updatedAt))}
+                fullWidth
+                sx={{ marginBottom: "15px" }}
+                disabled
+              />
+            </Grid>
+          )}
 
           <Grid item xs={6}>
             <TextField
               label="Descrição"
               name="description"
-              value={formData.description}
+              value={currentComplaint.description || ""}
+              multiline
+              rows={4}
+              fullWidth
+              sx={{ marginBottom: "15px" }}
+              disabled
+            />
+          </Grid>
+
+          <Grid item xs={6}>
+            <TextField
+              label="Descrição do solucionador"
+              name="solverDescription"
+              value={currentComplaint.solverDescription || ""}
               multiline
               rows={4}
               fullWidth
               sx={{ marginBottom: "4px" }}
-              disabled
+              onChange={handleChange}
             />
           </Grid>
 
@@ -193,7 +215,7 @@ export function ComplaintDialog({
               <TextField
                 label="Cidade"
                 name="city"
-                value={formData.city}
+                value={currentComplaint.location.city || ""}
                 fullWidth
                 sx={{ marginBottom: "4px" }}
                 disabled
@@ -203,7 +225,7 @@ export function ComplaintDialog({
               <TextField
                 label="Estado"
                 name="state"
-                value={formData.state}
+                value={currentComplaint.location.state || ""}
                 fullWidth
                 sx={{ marginBottom: "4px" }}
                 disabled
@@ -213,7 +235,7 @@ export function ComplaintDialog({
               <TextField
                 label="Bairro"
                 name="neighborhood"
-                value={formData.neighborhood}
+                value={currentComplaint.location.neighborhood || ""}
                 fullWidth
                 sx={{ marginBottom: "4px" }}
                 disabled
@@ -223,7 +245,7 @@ export function ComplaintDialog({
               <TextField
                 label="Rua"
                 name="street"
-                value={formData.street}
+                value={currentComplaint.location.street || ""}
                 fullWidth
                 sx={{ marginBottom: "4px" }}
                 disabled
@@ -233,7 +255,7 @@ export function ComplaintDialog({
               <TextField
                 label="Número"
                 name="number"
-                value={formData.number}
+                value={currentComplaint.location.number || ""}
                 fullWidth
                 sx={{ marginBottom: "4px" }}
                 disabled
@@ -243,7 +265,7 @@ export function ComplaintDialog({
               <TextField
                 label="CEP"
                 name="cep"
-                value={formData.cep}
+                value={currentComplaint.location.cep || ""}
                 fullWidth
                 sx={{ marginBottom: "4px" }}
                 disabled

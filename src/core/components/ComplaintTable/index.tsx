@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,11 +7,15 @@ import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Button } from "@mui/material";
+import { Button, Tooltip, Typography } from "@mui/material";
 import ModeEditOutlineRoundedIcon from "@mui/icons-material/ModeEditOutlineRounded";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { TablePaginationActions } from "./TablePaginationActions";
 import { ComplaintDialog } from "../ComplaintDialog";
-import { FIND_ALL_COMPLAINTS_QUERY } from "../../graphql/queries";
+import {
+  FIND_ALL_COMPLAINTS_QUERY,
+  FIND_COMPLAINT_QUERY,
+} from "../../graphql/queries";
 import { useQuery } from "@apollo/client";
 import { LocalStorageManager } from "../../shared/LocalStorageManager";
 import {
@@ -21,13 +25,20 @@ import {
 } from "../../interfaces/graphql/FindAllComplaintsQuery";
 import { formatDateTime } from "../../shared/formatDate";
 import { AuthContext, AuthContextValue } from "../../context/AuthContext";
-import { getComplaintStatusTranslation } from "../../shared/getComplaintStatusTranslation";
+import { Complaint } from "../../interfaces/types/Complaint";
+import {
+  FindComplaintInput,
+  FindComplaintResponse,
+} from "../../interfaces/graphql/FindComplaintQuery";
+import { handleInvalidAuthToken } from "../../shared/handleInvalidAuthToken";
+import { complaintStatusesManager } from "../../shared/complaintStatusesManager";
 
 export function ComplaintTable(): JSX.Element {
-  const { setIsAuthenticated } =
+  const { setIsAuthenticated, setAccount } =
     useContext(AuthContext) || ({} as AuthContextValue);
-  const [currentComplaint, setCurrentComplaint] =
-    useState<ComplaintTableRow | null>(null);
+  const [currentComplaint, setCurrentComplaint] = useState<Complaint | null>(
+    null
+  );
   const [openDialog, setOpenDialog] = useState(false);
   const [rows, setRows] = useState<ComplaintTableRow[]>([]);
   const [page, setPage] = useState(0);
@@ -35,30 +46,43 @@ export function ComplaintTable(): JSX.Element {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   const token = LocalStorageManager.getItem("aedes-token");
-  useQuery<FindAllComplaintsResponse, FindAllComplaintsInput>(
-    FIND_ALL_COMPLAINTS_QUERY,
-    {
-      variables: {
-        input: {
-          limit: 1,
-          offset: 0,
-        },
+
+  function handleApiError(error: any): void {
+    handleInvalidAuthToken({ error, setIsAuthenticated, setAccount });
+  }
+
+  const { refetch: refetchAllComplaints } = useQuery<
+    FindAllComplaintsResponse,
+    FindAllComplaintsInput
+  >(FIND_ALL_COMPLAINTS_QUERY, {
+    variables: {
+      input: {
+        limit: 5,
+        offset: 0,
       },
-      context: {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
+    },
+    context: {
+      headers: {
+        authorization: `Bearer ${token}`,
       },
-      onCompleted: (data: FindAllComplaintsResponse) => {
-        setRows(data.findAllComplaints.items);
+    },
+    onCompleted: (data: FindAllComplaintsResponse) => {
+      setRows(data.findAllComplaints.items);
+    },
+    onError: handleApiError,
+  });
+  const { refetch: refetchCurrentComplaint } = useQuery<
+    FindComplaintResponse,
+    FindComplaintInput
+  >(FIND_COMPLAINT_QUERY, {
+    skip: true,
+    context: {
+      headers: {
+        authorization: `Bearer ${token}`,
       },
-      onError: (error: any) => {
-        if (error.message === "Invalid token") {
-          setIsAuthenticated(false);
-        }
-      },
-    }
-  );
+    },
+    onError: handleApiError,
+  });
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -67,9 +91,14 @@ export function ComplaintTable(): JSX.Element {
     setPage(newPage);
   };
 
-  const handleEdit = (row: ComplaintTableRow): void => {
+  const handleEdit = async (row: ComplaintTableRow): Promise<void> => {
+    const result = await refetchCurrentComplaint({
+      input: {
+        id: row.id,
+      },
+    });
+    setCurrentComplaint(result.data.findComplaint);
     setOpenDialog(true);
-    setCurrentComplaint(row);
   };
 
   return (
@@ -90,13 +119,36 @@ export function ComplaintTable(): JSX.Element {
                 </TableCell>
                 <TableCell align="right">{row.formattedAddress}</TableCell>
                 <TableCell style={{ width: 160 }} align="right">
-                  {getComplaintStatusTranslation(row.status)}
+                  {complaintStatusesManager.getComplaintStatusTranslation(
+                    row.status
+                  )}
+                </TableCell>
+                <TableCell align="right">
+                  <Tooltip title={row.description}>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Typography
+                        component="div"
+                        noWrap
+                        sx={{
+                          maxWidth: 200,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {row.description}
+                      </Typography>
+                      <InfoOutlinedIcon
+                        fontSize="small"
+                        style={{ marginLeft: 4 }}
+                      />
+                    </div>
+                  </Tooltip>
                 </TableCell>
                 <TableCell align="right">
                   <Button
                     variant="outlined"
                     endIcon={<ModeEditOutlineRoundedIcon />}
-                    onClick={(): void => handleEdit(row)}
+                    onClick={(): Promise<void> => handleEdit(row)}
                   >
                     Editar
                   </Button>
@@ -124,11 +176,15 @@ export function ComplaintTable(): JSX.Element {
           </TableFooter>
         </Table>
       </TableContainer>
-      {/* <ComplaintDialog
-        open={openDialog}
-        setOpen={setOpenDialog}
-        currentComplaint={currentComplaint}
-      /> */}
+      {currentComplaint && currentComplaint.id && (
+        <ComplaintDialog
+          open={openDialog}
+          setOpen={setOpenDialog}
+          currentComplaint={currentComplaint}
+          setCurrentComplaint={setCurrentComplaint}
+          afterSave={refetchAllComplaints}
+        />
+      )}
     </>
   );
 }
