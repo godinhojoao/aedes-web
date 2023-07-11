@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { SignInPage } from "./pages/SignIn";
 import { SignUpPage } from "./pages/SignUp";
-import { DenguePage } from "./pages/Dengue";
+// import { DenguePage } from "./pages/Dengue";
 import { InfoPage } from "./pages/Info";
 import { useContext, useEffect } from "react";
 import { ComplaintPage } from "./pages/Complaint";
@@ -52,7 +52,7 @@ export function AppRoutes({ setPathname }: RoutesProps): JSX.Element {
       {isAuthenticated ? (
         <>
           <Route path="/denuncias" element={<ComplaintPage />} />
-          <Route path="/mapa-dengue" element={<DenguePage />} />
+          {/* <Route path="/mapa-dengue" element={<DenguePage />} /> */}
           <Route path="/informacoes" element={<InfoPage />} />
         </>
       ) : (
