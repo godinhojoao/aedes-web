@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,8 +8,8 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Button, Tooltip, Typography } from "@mui/material";
-import ModeEditOutlineRoundedIcon from "@mui/icons-material/ModeEditOutlineRounded";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import ModeEditOutlineRounded from "@mui/icons-material/ModeEditOutlineRounded";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import { TablePaginationActions } from "./TablePaginationActions";
 import { ComplaintDialog } from "../ComplaintDialog";
 import {
@@ -137,7 +137,7 @@ export function ComplaintTable(): JSX.Element {
                       >
                         {row.description}
                       </Typography>
-                      <InfoOutlinedIcon
+                      <InfoOutlined
                         fontSize="small"
                         style={{ marginLeft: 4 }}
                       />
@@ -147,7 +147,7 @@ export function ComplaintTable(): JSX.Element {
                 <TableCell align="right">
                   <Button
                     variant="outlined"
-                    endIcon={<ModeEditOutlineRoundedIcon />}
+                    endIcon={<ModeEditOutlineRounded />}
                     onClick={(): Promise<void> => handleEdit(row)}
                   >
                     Editar

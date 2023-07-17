@@ -1,10 +1,10 @@
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import FirstPageIcon from "@mui/icons-material/FirstPage";
+import FirstPage from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import LastPageIcon from "@mui/icons-material/LastPage";
+import LastPage from "@mui/icons-material/LastPage";
 import { TablePaginationActionsProps } from "@mui/material/TablePagination/TablePaginationActions";
 
 export function TablePaginationActions(
@@ -44,7 +44,7 @@ export function TablePaginationActions(
         disabled={page === 0}
         aria-label="primeira página"
       >
-        {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
+        {theme.direction === "rtl" ? <LastPage /> : <FirstPage />}
       </IconButton>
       <IconButton
         onClick={handleBackButtonClick}
@@ -73,7 +73,7 @@ export function TablePaginationActions(
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="última página"
       >
-        {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
+        {theme.direction === "rtl" ? <FirstPage /> : <LastPage />}
       </IconButton>
     </Box>
   );

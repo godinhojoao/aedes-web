@@ -6,7 +6,7 @@ import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import LockOutlined from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { Copyright } from "../../core/components/Copyright";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -91,7 +91,7 @@ export function SignInPage(): JSX.Element {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-            <LockOutlinedIcon />
+            <LockOutlined />
           </Avatar>
           <Typography component="h1" variant="h5">
             Entre com sua conta

@@ -1,30 +1,30 @@
 import {Fragment} from "react";
 import { Link } from "react-router-dom";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItem from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 // import MapRoundedIcon from "@mui/icons-material/MapRounded";
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
-import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
+import InfoRounded from "@mui/icons-material/InfoRounded";
 
 export const mainListItems = (
   <Fragment>
     <ListItemButton component={Link} to="/denuncias">
-      <ListItemIcon>
+      <ListItem>
         <DashboardRoundedIcon />
-      </ListItemIcon>
+      </ListItem>
       <ListItemText primary="Denúncias" />
     </ListItemButton>
     {/* <ListItemButton component={Link} to="/mapa-dengue">
-      <ListItemIcon>
+      <ListItem>
         <MapRoundedIcon />
-      </ListItemIcon>
+      </ListItem>
       <ListItemText primary="Mapa da dengue" />
     </ListItemButton> */}
     <ListItemButton component={Link} to="/informacoes">
-      <ListItemIcon>
-        <InfoRoundedIcon />
-      </ListItemIcon>
+      <ListItem>
+        <InfoRounded />
+      </ListItem>
       <ListItemText primary="Informações" />
     </ListItemButton>
   </Fragment>

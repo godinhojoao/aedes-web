@@ -5,8 +5,8 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import LogoutIcon from "@mui/icons-material/Logout";
+import Menu from "@mui/icons-material/Menu";
+import Logout from "@mui/icons-material/Logout";
 import { HiddableComponentProps } from "../../interfaces/props/HiddableComponentProps";
 import { AuthContext, AuthContextValue } from "../../context/AuthContext";
 import { useContext } from "react";
@@ -61,7 +61,7 @@ export function Header({ open, setOpen }: HiddableComponentProps): JSX.Element {
               ...(open && { display: "none" }),
             }}
           >
-            <MenuIcon />
+            <Menu />
           </IconButton>
           <Typography
             component="h1"
@@ -77,7 +77,7 @@ export function Header({ open, setOpen }: HiddableComponentProps): JSX.Element {
             aria-label="logout"
             onClick={(): void => logout()}
           >
-            <LogoutIcon />
+            <Logout />
           </IconButton>
         </Toolbar>
       </AppBar>

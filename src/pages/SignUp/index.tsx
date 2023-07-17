@@ -5,7 +5,7 @@ import Avatar from "@mui/material/Avatar";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import LockOutlined from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
@@ -81,7 +81,7 @@ export function SignUpPage(): JSX.Element {
           marginTop={6}
         >
           <Avatar sx={{ m: 0, bgcolor: "primary.main" }}>
-            <LockOutlinedIcon />
+            <LockOutlined />
           </Avatar>
 
           <Typography component="h1" variant="h5">

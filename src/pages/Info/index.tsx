@@ -9,8 +9,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import IconButton from "@mui/material/IconButton";
-import GitHubIcon from "@mui/icons-material/Github";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import { GitHub, LinkedIn } from "@mui/icons-material";
 import IfsulPng from "./../../assets/ifsul.png";
 
 const employees = [
@@ -145,7 +144,7 @@ export function InfoPage(): JSX.Element {
                       aria-label="LinkedIn"
                       color="primary"
                     >
-                      <LinkedInIcon />
+                      <LinkedIn />
                     </IconButton>
                   )}
 
@@ -156,7 +155,7 @@ export function InfoPage(): JSX.Element {
                       aria-label="GitHub"
                       color="primary"
                     >
-                      <GitHubIcon />
+                      <GitHub />
                     </IconButton>
                   )}
                 </CardActions>
