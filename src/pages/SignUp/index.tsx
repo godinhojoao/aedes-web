@@ -48,6 +48,7 @@ export function SignUpPage(): JSX.Element {
   );
 
   const onSubmit = async (input: any): Promise<void> => {
+    input.role = 'ADMIN';
     trigger().then(async () => {
       const result = await createAccount({ variables: { input: input } });
       // @ts-ignore
@@ -79,7 +80,7 @@ export function SignUpPage(): JSX.Element {
           alignItems="center"
           marginTop={6}
         >
-          <Avatar sx={{ m: 0, bgcolor: "secondary.main" }}>
+          <Avatar sx={{ m: 0, bgcolor: "primary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
 
@@ -166,7 +167,7 @@ export function SignUpPage(): JSX.Element {
           </Grid>
           <Grid container justifyContent="flex-end">
             <Grid item mt={2} mb={2}>
-              <Link href="/" variant="body2" color="secondary">
+              <Link href="/" variant="body2" color="primary">
                 Já possui uma conta? Entrar
               </Link>
             </Grid>
@@ -176,7 +177,7 @@ export function SignUpPage(): JSX.Element {
         <Button
           type="submit"
           variant="contained"
-          color="secondary"
+          color="primary"
           fullWidth
           disabled={!isValid && isSubmitted}
           onClick={handleSubmit(onSubmit)}

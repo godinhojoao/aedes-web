@@ -1,4 +1,3 @@
-import * as React from "react";
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -7,7 +6,10 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { HiddableComponentProps } from "../../interfaces/props/HiddableComponentProps";
+import { AuthContext, AuthContextValue } from "../../context/AuthContext";
+import { useContext } from "react";
 
 const drawerWidth: number = 240;
 
@@ -34,6 +36,8 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 export function Header({ open, setOpen }: HiddableComponentProps): JSX.Element {
+  const { logout } = useContext(AuthContext) || ({} as AuthContextValue);
+
   const toggleDrawer = (): void => {
     setOpen(!open);
   };
@@ -66,8 +70,15 @@ export function Header({ open, setOpen }: HiddableComponentProps): JSX.Element {
             noWrap
             sx={{ flexGrow: 1 }}
           >
-              Aedes Web
+            Aedes Web
           </Typography>
+          <IconButton
+            color="inherit"
+            aria-label="logout"
+            onClick={(): void => logout()}
+          >
+            <LogoutIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
     </Box>

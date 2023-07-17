@@ -90,7 +90,7 @@ export function SignInPage(): JSX.Element {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
@@ -126,7 +126,7 @@ export function SignInPage(): JSX.Element {
               type="submit"
               fullWidth
               variant="contained"
-              color="secondary"
+              color="primary"
               sx={{ mt: 3, mb: 2 }}
               disabled={!isValid && isSubmitted}
               onClick={handleSubmit(onSubmit)}
@@ -140,7 +140,7 @@ export function SignInPage(): JSX.Element {
                   </Link>
                 </Grid> */}
               <Grid item>
-                <Link href="/#/cadastro" variant="body2" color="secondary">
+                <Link href="/#/cadastro" variant="body2" color="primary">
                   {"Não tem uma conta? Criar nova conta"}
                 </Link>
               </Grid>

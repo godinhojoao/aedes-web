@@ -1,7 +1,3 @@
-fazer funcionar mesmo consumindo o backend:
-[] - mapa da dengue
-[] - se der tempo mudar o mapa da dengue pra um heatmap
-
 depois de acabar tudo
 [] - adicionar melhor as tecnologias no readme depois de finalizar projeto
 [] - deploy netlify
@@ -9,3 +5,4 @@ depois de acabar tudo
 [] - mudar modal de erro pra context e tirar de todos lugares, manter só no APP
   [] - tratar erros da api em um unico lugar
 [] - padronizar headers em um unico lugar
+[] - adicionar heatmap
