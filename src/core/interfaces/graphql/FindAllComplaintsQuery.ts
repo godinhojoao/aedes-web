@@ -11,9 +11,11 @@ export type ComplaintTableRow = {
   id: string;
   status: StatusesEnum;
   description: string;
-  city: string;
+  location: {
+    city: string;
+  }
   formattedAddress: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface FindAllComplaintsResponse {

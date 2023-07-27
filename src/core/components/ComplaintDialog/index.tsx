@@ -23,6 +23,7 @@ import {
 } from "../../interfaces/graphql/UpdateComplaintMutation";
 import { useMutation } from "@apollo/client";
 import { LocalStorageManager } from "../../shared/LocalStorageManager";
+import { removeHoursFromTimestamp } from "../../shared/removeHoursFromTimestamp";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -63,6 +64,15 @@ export function ComplaintDialog({
       solverId: account?.id,
       solverDescription: currentComplaint.solverDescription || "",
       status: currentComplaint.status,
+      location: {
+        id: currentComplaint.location.id,
+        city: currentComplaint.location.city,
+        state: currentComplaint.location.state,
+        street: currentComplaint.location.street,
+        neighborhood: currentComplaint.location.neighborhood,
+        cep: currentComplaint.location.cep,
+        number: currentComplaint.location.number,
+      },
       updatedAt: new Date(),
     };
     updateComplaint({ variables: { input: complaintToUpdate } });
@@ -159,7 +169,7 @@ export function ComplaintDialog({
               name="createdAt"
               value={
                 currentComplaint.createdAt
-                  ? formatDateTime(new Date(currentComplaint.createdAt))
+                  ? formatDateTime(removeHoursFromTimestamp(currentComplaint.createdAt, 3))
                   : ""
               }
               fullWidth
@@ -173,7 +183,7 @@ export function ComplaintDialog({
               <TextField
                 label="Data de atualização"
                 name="updatedAt"
-                value={formatDateTime(new Date(currentComplaint.updatedAt))}
+                value={formatDateTime(removeHoursFromTimestamp(currentComplaint.updatedAt, 3))}
                 fullWidth
                 sx={{ marginBottom: "15px" }}
                 disabled

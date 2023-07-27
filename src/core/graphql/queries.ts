@@ -7,9 +7,11 @@ export const FIND_ALL_COMPLAINTS_QUERY = gql`
         id
         status
         description
-        city
         createdAt
         formattedAddress
+        location {
+          city
+        }
       }
       totalCount
       pageInfo {

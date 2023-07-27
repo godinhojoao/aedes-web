@@ -32,6 +32,7 @@ import {
 } from "../../interfaces/graphql/FindComplaintQuery";
 import { handleInvalidAuthToken } from "../../shared/handleInvalidAuthToken";
 import { complaintStatusesManager } from "../../shared/complaintStatusesManager";
+import { removeHoursFromTimestamp } from "../../shared/removeHoursFromTimestamp";
 
 export function ComplaintTable(): JSX.Element {
   const { setIsAuthenticated, setAccount } =
@@ -112,10 +113,10 @@ export function ComplaintTable(): JSX.Element {
             ).map((row) => (
               <TableRow key={row.id}>
                 <TableCell component="th" scope="row">
-                  {formatDateTime(new Date(row.createdAt))}
+                  {formatDateTime(removeHoursFromTimestamp(row.createdAt, 3))}
                 </TableCell>
                 <TableCell style={{ width: 160 }} align="right">
-                  {row.city}
+                  {row.location.city}
                 </TableCell>
                 <TableCell align="right">{row.formattedAddress}</TableCell>
                 <TableCell style={{ width: 160 }} align="right">

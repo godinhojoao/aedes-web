@@ -14,6 +14,6 @@ export interface Complaint {
     name: string;
   };
   solverDescription?: string;
-  updatedAt?: Date;
-  createdAt: Date;
+  updatedAt?: string;
+  createdAt: string;
 }
