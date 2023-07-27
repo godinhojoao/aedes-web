@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -40,12 +40,11 @@ export function ComplaintTable(): JSX.Element {
   const [currentComplaint, setCurrentComplaint] = useState<Complaint | null>(
     null
   );
+  const [totalCount, setTotalCount] = useState<number>(0);
   const [openDialog, setOpenDialog] = useState(false);
   const [rows, setRows] = useState<ComplaintTableRow[]>([]);
   const [page, setPage] = useState(0);
   const rowsPerPage = 7;
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   const token = LocalStorageManager.getItem("aedes-token");
 
   function handleApiError(error: any): void {
@@ -58,8 +57,8 @@ export function ComplaintTable(): JSX.Element {
   >(FIND_ALL_COMPLAINTS_QUERY, {
     variables: {
       input: {
-        limit: 5,
-        offset: 0,
+        limit: rowsPerPage,
+        offset: page,
       },
     },
     context: {
@@ -68,6 +67,7 @@ export function ComplaintTable(): JSX.Element {
       },
     },
     onCompleted: (data: FindAllComplaintsResponse) => {
+      setTotalCount(data.findAllComplaints.totalCount);
       setRows(data.findAllComplaints.items);
     },
     onError: handleApiError,
@@ -102,15 +102,25 @@ export function ComplaintTable(): JSX.Element {
     setOpenDialog(true);
   };
 
+  useEffect(() => {
+    const fetchComplaints = async (): Promise<void> => {
+      const response = await refetchAllComplaints();
+      if (response && response.data && response.data.findAllComplaints) {
+        const items = response.data.findAllComplaints.items;
+        const totalCount = response.data.findAllComplaints.totalCount;
+        setRows(items);
+        setTotalCount(totalCount);
+      }
+    };
+    fetchComplaints();
+  }, [page, refetchAllComplaints]);
+
   return (
     <>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
           <TableBody>
-            {(rowsPerPage > 0
-              ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              : rows
-            ).map((row) => (
+            {rows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell component="th" scope="row">
                   {formatDateTime(removeHoursFromTimestamp(row.createdAt, 3))}
@@ -156,17 +166,12 @@ export function ComplaintTable(): JSX.Element {
                 </TableCell>
               </TableRow>
             ))}
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
           </TableBody>
           <TableFooter>
             <TableRow>
               <TablePagination
                 colSpan={3}
-                count={rows.length}
+                count={totalCount}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={[]}
                 page={page}
